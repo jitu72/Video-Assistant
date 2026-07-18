@@ -1,0 +1,47 @@
+.video-assistant-dock {
+  position: fixed;
+  z-index: 2147483647;
+  width: 46px;
+  height: 46px;
+}
+
+.video-assistant-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #087cff;
+  box-shadow: 0 4px 14px rgba(0, 73, 166, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.16) inset;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 180ms ease, background 180ms ease;
+  animation: assistant-in 220ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.video-assistant-icon:hover {
+  background: #258cff;
+  transform: scale(1.06);
+}
+
+.video-assistant-icon:active {
+  transform: scale(0.94);
+}
+
+.video-assistant-icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+.video-assistant-icon:focus-visible {
+  outline: 3px solid rgba(8, 124, 255, 0.45);
+  outline-offset: 3px;
+}
+
+@keyframes assistant-in {
+  from { opacity: 0; transform: scale(0.72); }
+  to { opacity: 1; transform: scale(1); }
+}

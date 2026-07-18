@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Assistant</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="player-shell">
+    <section class="video-container">
+      <video id="videoPlayer" playsinline>
+        <p>Your browser doesn't support HTML5 video.</p>
+      </video>
+
+      <div class="video-placeholder" aria-hidden="true">
+        <div class="assistant-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="m9 8 7 4-7 4V8Z"/>
+            <rect x="3" y="4" width="18" height="16" rx="3"/>
+          </svg>
+        </div>
+        <strong>Video assistant</strong>
+        <span>Choose a video from the menu</span>
+      </div>
+
+      <div id="playerOverlay" class="player-overlay">
+        <header class="overlay-header">
+          <div class="video-title">
+            <span class="title-mark" aria-hidden="true"></span>
+            <span>Video assistant</span>
+          </div>
+          <div class="top-actions">
+            <button id="menuBtn" class="round-btn" type="button" aria-label="More options" aria-expanded="false" title="More options">
+              <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>
+            </button>
+            <button id="closeBtn" class="round-btn" type="button" aria-label="Close player" title="Close player">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="transport-controls">
+          <button id="rewindBtn" class="transport-btn side" type="button" aria-label="Rewind 10 seconds" title="Rewind 10 seconds">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><text x="9" y="15" fill="currentColor" stroke="none" font-size="8" font-weight="700">10</text></svg>
+          </button>
+          <button id="playPauseBtn" class="transport-btn play" type="button" aria-label="Play" title="Play or pause">
+            <svg class="play-glyph" viewBox="0 0 24 24" fill="currentColor"><path d="m8 5 11 7-11 7V5Z"/></svg>
+            <svg class="pause-glyph" viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          </button>
+          <button id="forwardBtn" class="transport-btn side" type="button" aria-label="Forward 10 seconds" title="Forward 10 seconds">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/><text x="9" y="15" fill="currentColor" stroke="none" font-size="8" font-weight="700">10</text></svg>
+          </button>
+        </div>
+
+        <div class="bottom-controls">
+          <div class="timeline-row">
+            <span id="currentTimeLabel">0:00</span>
+            <input id="progressSlider" type="range" min="0" max="100" step="0.1" value="0" aria-label="Video progress">
+            <span id="durationLabel">0:00</span>
+          </div>
+          <div class="view-actions">
+            <div class="view-actions-left">
+              <button id="pipBtn" class="overlay-action" type="button" title="Pop-up player">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><rect x="11" y="11" width="7" height="5" rx="1" fill="currentColor" stroke="none"/></svg>
+                <span>Pop-up</span>
+              </button>
+              <button id="loopBtn" class="overlay-action" type="button" aria-pressed="false" title="Loop video">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>
+                <span>Loop</span>
+              </button>
+            </div>
+            <div class="view-actions-right">
+              <button id="speedQuickBtn" class="overlay-action speed-action" type="button" title="Change playback speed" aria-label="Playback speed 1x" aria-expanded="false">
+                <span>1.0×</span>
+              </button>
+              <button id="fullscreenBtn" class="overlay-action" type="button" title="Fullscreen">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 3H5a2 2 0 0 0-2 2v3m11-5h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3m11 5h3a2 2 0 0 0 2-2v-3"/></svg>
+                <span>Full screen</span>
+              </button>
+            </div>
+          </div>
+          <div id="speedPopover" class="speed-popover" aria-hidden="true">
+            <div class="speed-popover-heading">
+              <span>Playback speed</span>
+              <output id="speedPopoverValue" for="speedPopoverSlider">1.00x</output>
+            </div>
+            <input id="speedPopoverSlider" type="range" min="0.25" max="3" step="0.01" value="1" aria-label="Playback speed">
+            <div class="speed-presets" aria-label="Speed presets">
+              <button type="button" data-speed="0.5">0.5×</button>
+              <button type="button" data-speed="1" class="active">1×</button>
+              <button type="button" data-speed="1.25">1.25×</button>
+              <button type="button" data-speed="1.5">1.5×</button>
+              <button type="button" data-speed="2">2×</button>
+              <button type="button" data-speed="3">3×</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside id="settingsMenu" class="settings-menu" aria-hidden="true">
+      <div class="menu-heading">
+        <div>
+          <span>VIDEO ASSISTANT</span>
+          <strong>Playback settings</strong>
+        </div>
+        <button id="menuCloseBtn" class="menu-close" type="button" aria-label="Close menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+
+      <div class="menu-section">
+        <div class="setting-label"><label for="speedSlider">Playback speed</label><output id="speedValue" for="speedSlider">1.00x</output></div>
+        <input id="speedSlider" type="range" min="0.25" max="3" step="0.01" value="1">
+        <div class="range-labels"><span>0.25×</span><span>Normal</span><span>3×</span></div>
+      </div>
+
+      <div class="menu-section">
+        <div class="setting-label"><label for="volumeSlider">Volume</label><output id="volumeValue" for="volumeSlider">100%</output></div>
+        <input id="volumeSlider" type="range" min="0" max="100" value="100">
+        <div class="range-labels"><span>Mute</span><span>Maximum</span></div>
+      </div>
+
+      <div class="menu-section source-section">
+        <label for="urlInput">Video address</label>
+        <input id="urlInput" type="url" placeholder="https://example.com/video.mp4" spellcheck="false">
+        <button id="loadBtn" class="blue-btn" type="button">Play video</button>
+      </div>
+
+      <button id="downloadBtn" class="menu-action" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0 5-5m-5 5-5-5"/><path d="M4 19h16"/></svg>
+        <span>Save video</span>
+      </button>
+    </aside>
+
+    <div class="info">
+      <span class="info-dot" aria-hidden="true"></span>
+      <p id="videoInfo" role="status" aria-live="polite">No video loaded</p>
+    </div>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>
