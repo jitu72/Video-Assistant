@@ -42,6 +42,8 @@ A browser extension that adds a floating icon when videos play on web pages, sim
 4. Click the icon to open the original live video in fullscreen assistant mode
 5. Use the toolbar popup for the custom URL player, speed, volume, Picture-in-Picture, looping, and downloads
 
+![alt text](image.png)
+
 ### Manual Video Loading
 
 You can also manually load videos by:
